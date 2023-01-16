@@ -8,6 +8,8 @@ properties([
 
 // env.BRANCH="*/main"
 env.MAINTAINER= "maintainer@geminisolutions.com"
+env.BRANCH_CENTRALIZED_FILES="*/main"
+env.SSH_LINK_CENTRALIZED_FILES="git@github.com:gem-siddhant/centralized-repo.git"
 
 if(params.SERVICE=="gembook")
 {
@@ -48,8 +50,8 @@ node("${env.NODE_NAME}") {
 			dir ('target'){
 		    		sh 'pwd' 
  		    		sh 'chmod +x *.?ar'
-		    		sh 'env.EXECUTOR=`ls *.[j,w]ar`'
-		    		sh "sed -i -e 's/EXECUTOR/$EXECUTOR/g' ../DockerFile"
+// 		    		sh 'env.EXECUTOR=`ls *.[j,w]ar`'
+// 		    		sh "sed -i -e 's/EXECUTOR/$EXECUTOR/g' ../DockerFile"
 			}
             	}
            }
@@ -61,6 +63,18 @@ node("${env.NODE_NAME}") {
 //Docker and Deployment Stage
 node("${env.TRIVY_NODE}") {
        try {
+	stage('Checkout_Centralized_Files') {
+           dir ('repo') {
+               checkout([$class: 'GitSCM', 
+               branches: [[name: "$BRANCH_CENTRALIZED_FILES"]], 
+               doGenerateSubmoduleConfigurations: false, 
+               extensions: [], 
+               submoduleCfg:  [], 
+               userRemoteConfigs: [[credentialsId: 'admingithub', 
+               url: "$SSH_LINK_CENTRALIZED_FILES", 
+               poll: 'false']]])
+           }
+       }
        stage('Build_image') {
                 dir ('repo') {
 			container("${env.TRIVY_CONTAINER}") {

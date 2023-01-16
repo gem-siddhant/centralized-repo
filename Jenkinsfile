@@ -40,80 +40,18 @@ node("${env.NODE_NAME}") {
 	stage("${env.STAGE_NAME}") {
 	      container("${env.CONTAINER_NAME}") {
             dir ('repo'){
-// -----------------------------------------METHOD-1-(NOT WORKING)------------------------------------------
-//  		writeFile file: 'DockerFile', text: '''
-//           		FROM IMAGE
-//           		MAINTAINER MAINTAINER
-//           		COPY target/*.[j,w]ar /home/SERVICE-app.jar
-//           		WORKDIR WORKDIR_CMD
-//           		EXPOSE PORT
-//           		CMD java -jar SERVICE-app.jar
-//            		'''
-//-----------------------------------------METHOD-2(NOT WORKING)------------------------------------------
-// 		sh '''
-//            	echo "FROM IMAGE" >> DockerFile
-//            	echo "MAINTAINER MAINTAINER" >> DockerFile
-//            	echo "COPY target/*.[j,w]ar /home/SERVICE-app.jar" >> DockerFile
-//            	echo "WORKDIR WORKDIR_CMD" >> DockerFile
-//            	echo "EXPOSE PORT" >> DockerFile
-//            	echo "CMD java -jar SERVICE-app.jar" >> DockerFile
-// 		'''
-// -----------------------------------------METHOD-3(NOT WORKING)------------------------------------------		    
-// 		def dockerfile= '''
-// 		FROM IMAGE
-// 		MAINTAINER MAINTAINER
-// 		COPY target/*.[j,w]ar /home/SERVICE-app.jar
-// 		WORKDIR WORKDIR_CMD
-// 		EXPOSE PORT
-// 		CMD java -jar SERVICE-app.jar
-// 		'''
-		    
-// 		sh '''
-// 		echo "${dockerfile}" > DockerFile 
-// 		'''
-//---------------------------------------------------------------------------------------------
-		    
-// sh '''cat Deployment-beta.yaml<<EOF
-// apiVersion: apps/v1
-// kind: Deployment
-// metadata:
-//  name: atsbeta
-//  namespace: dev
-//  labels:
-//   app: atsbeta
-// spec:
-//   replicas: 1
-//   revisionHistoryLimit: 0
-//   selector:
-//    matchLabels:
-//     app: atsbeta
-//   template:
-//     metadata:
-//        labels:
-//          app: atsbeta
-//     spec:
-//      containers:
-//      - name: atsbeta
-//        image: registry-np.geminisolutions.com/ats/ats_svc_beta
-//        ports:
-//        - name: atsbeta
-//          containerPort: 8989
-//        imagePullPolicy: Always
-//      imagePullSecrets:
-//      - name: regcred		
-// EOF'''
 		    if (env.NODE_NAME == 'maven_runner_java11'  || env.NODE_NAME == 'maven_runner_java17' || env.NODE_NAME == 'maven-runner-18')
-			    {
-                    sh 'env'
-		    sh "${env.CMD1}"
- 		    sh "${env.CMD2}"
-		dir ('target'){
-		    sh 'pwd' 
- 		    sh 'chmod +x *.?ar'
-		    sh 'env.EXECUTOR=`ls *.[j,w]ar`'
-		    sh "sed -i -e 's/EXECUTOR/$EXECUTOR/g' ../DockerFile"
-		}
-            }
+		    {
+                    	sh 'env'
+		    	sh "${env.CMD1}"
+ 		    	sh "${env.CMD2}"
+			dir ('target'){
+		    		sh 'pwd' 
+ 		    		sh 'chmod +x *.?ar'
+		    		sh 'env.EXECUTOR=`ls *.[j,w]ar`'
+		    		sh "sed -i -e 's/EXECUTOR/$EXECUTOR/g' ../DockerFile"
+			}
+            	}
            }
         }
     }

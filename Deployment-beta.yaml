@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: REGISTRY
+  namespace: dev
+  labels:
+    app: REGISTRY
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: REGISTRY
+  template:
+    metadata:
+      labels:
+        app: REGISTRY
+    spec:
+      containers:
+        - name: REGISTRY
+          image: registry-np.geminisolutions.com/REGISTRY
+          ports:
+            - name: REGISTRY
+              containerPort: PORT
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: regcred
